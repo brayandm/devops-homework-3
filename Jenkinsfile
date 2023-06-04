@@ -24,7 +24,7 @@ pipeline {
                    chmod +x ./kubectl
                 """
                 withCredentials([file(credentialsId: 'kubernetes-config', variable: 'kubeConfig')]) {
-                    sh "kubectl --kubeconfig ${kubeConfig} run --image ttl.sh/pythonapp-brayand:1h myapp"   
+                    sh ".bin/kubectl --kubeconfig ${kubeConfig} run --image ttl.sh/pythonapp-brayand:1h myapp"   
                 }
             }
         }
