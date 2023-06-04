@@ -9,4 +9,4 @@ metadata:
 spec:
   containers:
     - image: ttl.sh/pythonapp-brayand:1h
-    name: myapp
+      name: myapp
