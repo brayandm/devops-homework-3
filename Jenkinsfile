@@ -24,6 +24,7 @@ pipeline {
                    chmod +x ./kubectl
                 """
                 withCredentials([file(credentialsId: 'kubernetes-config', variable: 'kubeConfig')]) {
+                    sh ".bin/kubectl --kubeconfig ${kubeConfig} create namespace brayan --dry-run=client -o yaml | kubectl apply -f -"
                     sh ".bin/kubectl --kubeconfig ${kubeConfig} delete --ignore-not-found=true --namespace brayan pod myapp"
                     sh ".bin/kubectl --kubeconfig ${kubeConfig} apply -f k8s/myapp.yaml"
                 }
