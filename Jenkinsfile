@@ -24,7 +24,8 @@ pipeline {
                    chmod +x ./kubectl
                 """
                 withCredentials([file(credentialsId: 'kubernetes-config', variable: 'kubeConfig')]) {
-                    sh ".bin/kubectl --kubeconfig ${kubeConfig} run --image ttl.sh/pythonapp-brayand:1h myapp"   
+                    sh ".bin/kubectl --kubeconfig ${kubeConfig} delete --ignore-not-found=true --namespace brayan pod myapp"
+                    sh ".bin/kubectl --kubeconfig ${kubeConfig} apply -f k8s/myapp.yaml"
                 }
             }
         }
