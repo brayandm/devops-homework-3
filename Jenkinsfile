@@ -15,32 +15,11 @@ pipeline {
             }
         }
 
-        stage('Pull Docker Image') {
+        stage('Run in K8s') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'target-ssh-credentials', keyFileVariable: 'KeyFile', usernameVariable: 'userName')]) {
-                    sh "ssh-keyscan 192.168.105.3 > ~/.ssh/known_hosts"
-
-                    sh "ssh -l ${userName} -i ${KeyFile} 192.168.105.3 -C docker pull ttl.sh/pythonapp-brayand:1h"
+                withCredentials([file(credentialsId: 'kubernetes-config', variable: 'kubeConfig')]) {
+                    sh "kubectl --kubeconfig ${kubeConfig} run --image ttl.sh/pythonapp-brayand:1h myapp"   
                 }
-            }
-        }
-
-        stage('Run Docker Image') {
-            steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'target-ssh-credentials', keyFileVariable: 'KeyFile', usernameVariable: 'userName')]) {
-                    sh "ssh-keyscan 192.168.105.3 > ~/.ssh/known_hosts"
-
-                    sh "ssh -l ${userName} -i ${KeyFile} 192.168.105.3 -C docker stop pythonapp || true"
-                    sh "ssh -l ${userName} -i ${KeyFile} 192.168.105.3 -C docker rm pythonapp || true"
-                    sh "ssh -l ${userName} -i ${KeyFile} 192.168.105.3 -C docker run -d --name pythonapp --restart=always -p 4444:4444 ttl.sh/pythonapp-brayand:1h"
-                }
-            }
-        }
-
-        stage('Health Check') {
-            steps {
-                sh "sleep 5"
-                sh "curl -s http://192.168.105.3:4444/api"
             }
         }
     }
